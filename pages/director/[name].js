@@ -1,27 +1,29 @@
-import Head from "next/head";
-import Link from "next/link";
+import React from "react";
 import axios from "axios";
+import Link from "next/link";
+import Head from "next/head";
 import {
   Card,
-  CardMedia,
   CardActionArea,
+  CardMedia,
   Typography,
   CardContent,
   Grid,
   Button,
 } from "@material-ui/core";
 
-import styles from "../styles/Home.module.css";
-import useStyles from "../styles/globalstyle";
-
-export default function Index({ movies }) {
-  const classes = useStyles();
+const ActorPage = ({ movies }) => {
   return (
-    <div className={styles.container}>
+    <>
       <Head>
-        <title>Next Moviezz</title>
+        <title>{movies[0].director} | Next Moviezz</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Button color="secondary" variant="contained">
+        <Link href={"/"}>
+          <a>Home</a>
+        </Link>
+      </Button>
       <Grid
         container
         direction="row"
@@ -31,7 +33,7 @@ export default function Index({ movies }) {
         alignItems="center"
       >
         {movies &&
-          movies.map((movie, index) => (
+          movies.map((movie) => (
             <Grid
               style={{ margin: "0px" }}
               key={movie._id}
@@ -53,7 +55,6 @@ export default function Index({ movies }) {
                       }}
                     />
                     <Typography gutterBottom variant="h5" component="h2">
-                      {index + 1 + ". "}
                       {movie.title}
                     </Typography>
                     <Typography gutterBottom variant="h6" color="primary">
@@ -69,7 +70,6 @@ export default function Index({ movies }) {
                       </Link>
                     </Typography>
                     <Typography gutterBottom variant="h6">
-                      Rating:
                       {movie.rating}
                     </Typography>
                   </CardContent>
@@ -78,15 +78,20 @@ export default function Index({ movies }) {
             </Grid>
           ))}
       </Grid>
-    </div>
+    </>
   );
-}
+};
 
-export const getStaticProps = async () => {
-  const res = await axios.get("https://node-shop-cart.herokuapp.com/movies");
+export default ActorPage;
+
+// destructuring params  from context
+export const getServerSideProps = async ({ params }) => {
+  const res = await axios.get(
+    `https://node-shop-cart.herokuapp.com/movies/director/${params.name}`
+  );
   return {
     props: {
-      movies: res.data.movies,
+      movies: res.data,
     },
   };
 };
